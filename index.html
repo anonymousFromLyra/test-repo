@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lyra — Demo Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:            #faf5ed;
+      --bg-card:       #f3ecdf;
+      --bg-table:      #fdf9f3;
+      --border:        #cfc3ab;
+      --border-dim:    #ddd4be;
+      --accent:        #8e2e18;
+      --accent-bright: #b03d22;
+      --accent-dim:    #6a2212;
+      --accent-glow:   rgba(142,46,24,0.06);
+      --cream:         #1e1810;
+      --cream-dim:     #6b5e48;
+      --tag-en:        #d4e8cc;
+      --tag-zh:        #ead4cc;
+      --tag-en-text:   #2e5e28;
+      --tag-zh-text:   #6e2820;
+      --radius:        6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 17px;
+      line-height: 1.75;
+      min-height: 100vh;
+    }
+
+    /* ── Noise texture overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      opacity: 0.6;
+    }
+
+    .page-wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 60px 24px 100px; }
+
+    /* ── Header ── */
+    header { text-align: center; margin-bottom: 60px; }
+
+    .title-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 18px;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300; font-size: clamp(2rem, 5vw, 3.2rem);
+      color: var(--cream); line-height: 1.2; margin-bottom: 12px;
+    }
+    h1 em { font-style: italic; color: var(--accent-bright); }
+
+    .subtitle {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 1.05rem; color: var(--cream-dim); margin-bottom: 36px;
+    }
+
+    .divider {
+      width: 120px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent-dim), transparent);
+      margin: 0 auto 36px;
+    }
+
+    .abstract {
+      max-width: 740px; margin: 0 auto;
+      font-size: 0.97rem; color: var(--cream-dim); line-height: 1.85;
+      text-align: justify; hyphens: auto;
+    }
+    .abstract strong { color: var(--cream); font-weight: 500; }
+
+    /* ── Section ── */
+    section { margin-bottom: 72px; }
+
+    .section-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 28px; }
+
+    .section-num {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      color: var(--accent-dim); letter-spacing: 0.15em; padding-top: 4px;
+    }
+
+    h2 {
+      font-family: 'Cormorant Garamond', serif; font-weight: 400;
+      font-size: 1.85rem; color: var(--cream);
+    }
+
+    .section-desc {
+      font-size: 0.93rem; color: var(--cream-dim); max-width: 780px;
+      margin-bottom: 28px; line-height: 1.8;
+    }
+
+    /* ── Table ── */
+    .audio-table-wrap {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--bg-table);
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+
+    thead th {
+      padding: 14px 20px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500;
+      background: #ede5d4; color: var(--cream-dim);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    thead th:first-child { text-align: left; }
+
+    thead th.col-base  { color: var(--cream-dim); }
+    thead th.col-fr    { color: var(--accent); }
+    thead th.col-lyra  { color: var(--accent-bright); }
+
+    tbody tr { border-bottom: 1px solid var(--border-dim); transition: background 0.15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(0,0,0,0.025); }
+
+    td { padding: 14px 20px; vertical-align: middle; }
+
+    td.sample-id {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      color: var(--cream-dim); white-space: nowrap; min-width: 110px;
+    }
+    td.sample-id .sample-num { color: var(--cream); font-size: 13px; }
+
+    .lang-tag {
+      display: inline-block; font-size: 9px; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 1px 6px; border-radius: 3px;
+      margin-left: 6px; vertical-align: middle; font-weight: 500;
+    }
+    .lang-en { background: var(--tag-en); color: var(--tag-en-text); }
+    .lang-zh { background: var(--tag-zh); color: var(--tag-zh-text); }
+
+    /* ── Music tags ── */
+    .tags {
+      display: flex; flex-wrap: wrap; gap: 4px;
+      margin-top: 7px;
+    }
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px; letter-spacing: 0.04em;
+      padding: 2px 7px; border-radius: 3px;
+      background: rgba(0,0,0,0.06);
+      color: var(--cream-dim);
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td.audio-cell { text-align: center; min-width: 200px; }
+
+    /* ── Custom audio player ── */
+    audio {
+      width: 100%; max-width: 260px;
+      height: 32px;
+      border-radius: 4px;
+      outline: none;
+      accent-color: var(--accent);
+      filter: brightness(0.85) saturate(0.7);
+    }
+    audio::-webkit-media-controls-panel { background: #1c1f28; }
+
+    /* Fallback label if file not found */
+    .audio-wrap { position: relative; display: inline-block; width: 100%; max-width: 260px; }
+    .audio-wrap audio { display: block; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center; margin-top: 80px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      color: var(--cream-dim); letter-spacing: 0.08em; opacity: 0.55;
+    }
+    footer a { color: var(--accent-dim); text-decoration: none; }
+    footer a:hover { color: var(--accent); }
+
+    /* ── Highlight stripe on Lyra column ── */
+    td.col-lyra-cell { background: var(--accent-glow); border-left: 2px solid rgba(181,71,42,0.25); }
+    thead th.col-lyra { border-bottom-color: rgba(181,71,42,0.5); }
+
+    /* responsive */
+    @media (max-width: 700px) {
+      table { display: block; overflow-x: auto; }
+      td, th { min-width: 150px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- ══════════════════════ HEADER ══════════════════════ -->
+  <header>
+    <p class="title-eyebrow">Audio Demo · Anonymous Submission</p>
+    <h1><em>Lyra</em>: Hierarchical Alignment for<br>Autoregressive Audio Generation</h1>
+    <p class="subtitle">via Variational Policy Optimization</p>
+    <div class="divider"></div>
+    <p class="abstract">
+      Autoregressive models over hierarchical <strong>Residual Vector Quantization (RVQ)</strong> tokens
+      have emerged as the dominant approach for high-fidelity audio generation.
+      We propose <strong>Lyra</strong>, a reinforcement learning post-training framework that aligns
+      RVQ token prediction with the waveform-level acoustic distribution by optimizing a
+      <strong>hierarchical ELBO</strong> over RVQ layers. Lyra employs subset-wise teacher forcing to
+      realize a hierarchically factorized variational posterior and layer-decomposable acoustic
+      rewards under <strong>GRPO</strong> for stable cross-layer credit assignment.
+      Lyra reduces FAD by <strong>19.3% on average</strong> and lifts SongEval from 3.64 to 4.00,
+      at only <strong>24% of the cost</strong> of conventional free-running GRPO.
+    </p>
+  </header>
+
+  <!-- ══════════════════════ HEARTMULA ══════════════════════ -->
+  <section id="heartmula">
+    <div class="section-header">
+      <span class="section-num">§ 01</span>
+      <h2>HeartMuLa-3B</h2>
+    </div>
+    <p class="section-desc">
+      HeartMuLa uses a Global-Local Transformer architecture over HeartCodec (8 RVQ codebooks, 48 kHz).
+      Lyra is applied to the residual subspace cb1–cb7, reducing FAD from 1.130 to <strong>0.859</strong> (−23.98%)
+      and achieving a <strong>59.7%</strong> human preference rate over the base model.
+      Samples span English and Mandarin Chinese prompts from the Muse dataset.
+    </p>
+    <div class="audio-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Sample</th>
+            <th class="col-base">Base</th>
+            <th class="col-fr">Free-Running GRPO</th>
+            <th class="col-lyra">Lyra</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- English HM -->
+          <tr>
+            <td class="sample-id"><span class="sample-num">2</span><span class="lang-tag lang-en">EN</span>
+              <div class="tags"><span class="tag">Strings</span><span class="tag">meditation</span><span class="tag">Piano</span><span class="tag">acoustic guitar</span><span class="tag">reflection</span><span class="tag">warm</span></div>
+            </td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_hm2_base.mp3"></audio></div></td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_hm2_fr.mp3"></audio></div></td>
+            <td class="audio-cell col-lyra-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_hm2_lyra.mp3"></audio></div></td>
+          </tr>
+          <tr>
+            <td class="sample-id"><span class="sample-num">9</span><span class="lang-tag lang-en">EN</span>
+              <div class="tags"><span class="tag">workout</span><span class="tag">drum machine</span><span class="tag">pop</span><span class="tag">synthesizer</span><span class="tag">Youthful</span><span class="tag">Keyboard</span></div>
+            </td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_hm9_base.mp3"></audio></div></td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_hm9_fr.mp3"></audio></div></td>
+            <td class="audio-cell col-lyra-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_hm9_lyra.mp3"></audio></div></td>
+          </tr>
+          <tr>
+            <td class="sample-id"><span class="sample-num">12</span><span class="lang-tag lang-en">EN</span>
+              <div class="tags"><span class="tag">Dating</span><span class="tag">Romantic</span><span class="tag">R&amp;B</span><span class="tag">synthesizer</span><span class="tag">drum machine</span><span class="tag">Keyboard</span></div>
+            </td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_hm12_base.mp3"></audio></div></td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_hm12_fr.mp3"></audio></div></td>
+            <td class="audio-cell col-lyra-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_hm12_lyra.mp3"></audio></div></td>
+          </tr>
+          <tr>
+            <td class="sample-id"><span class="sample-num">26</span><span class="lang-tag lang-en">EN</span>
+              <div class="tags"><span class="tag">powerful</span><span class="tag">faith</span><span class="tag">epic</span><span class="tag">gaming</span></div>
+            </td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_hm26_base.mp3"></audio></div></td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_hm26_fr.mp3"></audio></div></td>
+            <td class="audio-cell col-lyra-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_hm26_lyra.mp3"></audio></div></td>
+          </tr>
+          <!-- Chinese HM -->
+          <tr>
+            <td class="sample-id"><span class="sample-num">4</span><span class="lang-tag lang-zh">ZH</span>
+              <div class="tags"><span class="tag">epic</span><span class="tag">struggle</span><span class="tag">Keyboard</span><span class="tag">drum machine</span><span class="tag">synthesizer</span><span class="tag">gaming</span></div>
+            </td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_hm4_base.mp3"></audio></div></td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_hm4_fr.mp3"></audio></div></td>
+            <td class="audio-cell col-lyra-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_hm4_lyra.mp3"></audio></div></td>
+          </tr>
+          <tr>
+            <td class="sample-id"><span class="sample-num">11</span><span class="lang-tag lang-zh">ZH</span>
+              <div class="tags"><span class="tag">Sad</span><span class="tag">Regret</span><span class="tag">electric guitar</span><span class="tag">drums</span><span class="tag">Piano</span><span class="tag">emotional</span></div>
+            </td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_hm11_base.mp3"></audio></div></td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_hm11_fr.mp3"></audio></div></td>
+            <td class="audio-cell col-lyra-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_hm11_lyra.mp3"></audio></div></td>
+          </tr>
+          <tr>
+            <td class="sample-id"><span class="sample-num">15</span><span class="lang-tag lang-zh">ZH</span>
+              <div class="tags"><span class="tag">Relaxing</span><span class="tag">pop</span><span class="tag">Piano</span><span class="tag">drums</span><span class="tag">warm</span></div>
+            </td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_hm15_base.mp3"></audio></div></td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_hm15_fr.mp3"></audio></div></td>
+            <td class="audio-cell col-lyra-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_hm15_lyra.mp3"></audio></div></td>
+          </tr>
+          <tr>
+            <td class="sample-id"><span class="sample-num">17</span><span class="lang-tag lang-zh">ZH</span>
+              <div class="tags"><span class="tag">Ballad</span><span class="tag">Sad</span><span class="tag">soft</span><span class="tag">Piano</span><span class="tag">Strings</span></div>
+            </td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_hm17_base.mp3"></audio></div></td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_hm17_fr.mp3"></audio></div></td>
+            <td class="audio-cell col-lyra-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_hm17_lyra.mp3"></audio></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ YUE ══════════════════════ -->
+  <section id="yue">
+    <div class="section-header">
+      <span class="section-num">§ 02</span>
+      <h2>YuE (7B + 1B)</h2>
+    </div>
+    <p class="section-desc">
+      YuE adopts a two-stage pipeline with XCodec tokenization: Stage 1 predicts the primary codebook;
+      Stage 2 predicts the remainder as a flat token sequence. Lyra is applied independently to each stage,
+      reducing FAD from 4.631 to <strong>3.327</strong> (−28.2%) and lifting SongEval from 2.84 to <strong>3.47</strong>,
+      with a <strong>63.6%</strong> human preference rate over the base model.
+    </p>
+    <div class="audio-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Sample</th>
+            <th class="col-base">Base</th>
+            <th class="col-fr">Free-Running GRPO</th>
+            <th class="col-lyra">Lyra</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- English YuE -->
+          <tr>
+            <td class="sample-id"><span class="sample-num">YuE-6</span><span class="lang-tag lang-en">EN</span>
+              <div class="tags"><span class="tag">soft</span><span class="tag">Strings</span><span class="tag">synthesizer</span><span class="tag">acoustic guitar</span><span class="tag">faith</span><span class="tag">Romantic</span><span class="tag">Piano</span></div>
+            </td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_yue6_base.mp3"></audio></div></td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_yue6_fr.mp3"></audio></div></td>
+            <td class="audio-cell col-lyra-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_yue6_lyra.mp3"></audio></div></td>
+          </tr>
+          <tr>
+            <td class="sample-id"><span class="sample-num">YuE-13</span><span class="lang-tag lang-en">EN</span>
+              <div class="tags"><span class="tag">Walking</span><span class="tag">acoustic guitar</span><span class="tag">Strings</span><span class="tag">hope</span><span class="tag">hopeful</span></div>
+            </td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_yue13_base.mp3"></audio></div></td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_yue13_fr.mp3"></audio></div></td>
+            <td class="audio-cell col-lyra-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_yue13_lyra.mp3"></audio></div></td>
+          </tr>
+          <tr>
+            <td class="sample-id"><span class="sample-num">YuE-20</span><span class="lang-tag lang-en">EN</span>
+              <div class="tags"><span class="tag">workout</span><span class="tag">drum machine</span><span class="tag">synthesizer</span><span class="tag">pop</span><span class="tag">self-discovery</span></div>
+            </td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_yue20_base.mp3"></audio></div></td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_yue20_fr.mp3"></audio></div></td>
+            <td class="audio-cell col-lyra-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_yue20_lyra.mp3"></audio></div></td>
+          </tr>
+          <tr>
+            <td class="sample-id"><span class="sample-num">YuE-29</span><span class="lang-tag lang-en">EN</span>
+              <div class="tags"><span class="tag">wedding</span><span class="tag">Relationship</span><span class="tag">Piano</span><span class="tag">Strings</span><span class="tag">acoustic guitar</span><span class="tag">emotional</span></div>
+            </td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_yue29_base.mp3"></audio></div></td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_yue29_fr.mp3"></audio></div></td>
+            <td class="audio-cell col-lyra-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/en_yue29_lyra.mp3"></audio></div></td>
+          </tr>
+          <!-- Chinese YuE -->
+          <tr>
+            <td class="sample-id"><span class="sample-num">YuE-5</span><span class="lang-tag lang-zh">ZH</span>
+              <div class="tags"><span class="tag">Keyboard</span><span class="tag">Romantic</span><span class="tag">soft</span><span class="tag">electric guitar</span><span class="tag">drum machine</span><span class="tag">R&amp;B</span><span class="tag">synthesizer</span></div>
+            </td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_yue5_base.mp3"></audio></div></td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_yue5_fr.mp3"></audio></div></td>
+            <td class="audio-cell col-lyra-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_yue5_lyra.mp3"></audio></div></td>
+          </tr>
+          <tr>
+            <td class="sample-id"><span class="sample-num">YuE-6</span><span class="lang-tag lang-zh">ZH</span>
+              <div class="tags"><span class="tag">acoustic guitar</span><span class="tag">Piano</span><span class="tag">faith</span><span class="tag">wedding</span><span class="tag">synthesizer</span><span class="tag">Romantic</span><span class="tag">Strings</span></div>
+            </td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_yue6_base.mp3"></audio></div></td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_yue6_fr.mp3"></audio></div></td>
+            <td class="audio-cell col-lyra-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_yue6_lyra.mp3"></audio></div></td>
+          </tr>
+          <tr>
+            <td class="sample-id"><span class="sample-num">YuE-16</span><span class="lang-tag lang-zh">ZH</span>
+              <div class="tags"><span class="tag">electric guitar</span><span class="tag">drums</span><span class="tag">synthesizer</span><span class="tag">Strings</span><span class="tag">powerful</span><span class="tag">rock</span><span class="tag">epic</span></div>
+            </td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_yue16_base.mp3"></audio></div></td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_yue16_fr.mp3"></audio></div></td>
+            <td class="audio-cell col-lyra-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_yue16_lyra.mp3"></audio></div></td>
+          </tr>
+          <tr>
+            <td class="sample-id"><span class="sample-num">YuE-17</span><span class="lang-tag lang-zh">ZH</span>
+              <div class="tags"><span class="tag">Ballad</span><span class="tag">Sad</span><span class="tag">soft</span><span class="tag">Piano</span><span class="tag">Strings</span></div>
+            </td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_yue17_base.mp3"></audio></div></td>
+            <td class="audio-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_yue17_fr.mp3"></audio></div></td>
+            <td class="audio-cell col-lyra-cell"><div class="audio-wrap"><audio controls preload="none" src="demo_mp3/zh_yue17_lyra.mp3"></audio></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <p>Lyra · Anonymous Submission</p>
+  </footer>
+
+</div>
+</body>
+</html>

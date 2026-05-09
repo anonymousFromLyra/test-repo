@@ -1,0 +1,16 @@
+en_hm12:Dating,Romantic,R&B,synthesizer,drum machine,Keyboard
+en_hm2:Strings,meditation,Piano,acoustic guitar,reflection,warm
+en_hm9:workout,drum machine,pop,synthesizer,Youthful,Keyboard
+en_hm26:powerful,faith,epic,gaming
+zh_hm17:Ballad,Sad,soft,Piano,Strings
+zh_hm15:Relaxing,pop,Piano,drums,warm
+zh_hm11:Sad,Regret,electric guitar,drums,Piano,emotional
+zh_hm4:epic,struggle,Keyboard,drum machine,synthesizer,gaming
+zh_yue17:Ballad,Sad,soft,Piano,Strings
+zh_yue6:acoustic guitar,Piano,faith,wedding,synthesizer,Romantic,Strings
+zh_yue5:Keyboard,Romantic,soft,electric guitar,drum machine,R&B,synthesizer
+zh_yue16:electric guitar,drums,synthesizer,Strings,powerful,rock,epic
+en_yue6:soft,Strings,synthesizer,acoustic guitar,faith,Romantic,Piano
+en_yue13:Walking,acoustic guitar,Strings,hope,hopeful
+en_yue29:wedding,Relationship,Piano,Strings,acoustic guitar,emotional
+en_yue20:workout,drum machine,synthesizer,pop,self-discovery
